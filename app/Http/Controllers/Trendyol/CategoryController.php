@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 class CategoryController extends Controller
 {
+
     //add sub categories rrecursively
     public function addSubCategories($categories,$parent_id=null){
         foreach($categories as $category){
@@ -33,13 +34,13 @@ class CategoryController extends Controller
     //getcategories attributes
     public function getAttributes(Request $request){
         try{
-        $categories=Category::where("id",">","729")->get();
+       Category::where("id",">","2731")->chunk(10,function ($categories){
 
              $i=0;
                 foreach ($categories as $category) {
 
                     $res = Http::timeout(500)->get('https://api.trendyol.com/sapigw/product-categories/' . $category->trendyol_id . '/attributes');
-                    if(  $attributes = $res->json()['categoryAttributes']){
+                    if( isset($res->json()['cateogryAttributes'])&& $attributes = $res->json()['categoryAttributes']){
                         foreach ($attributes as $attribute) {
                             $attributeData = [
                                 'category_id' => $category->id,
@@ -97,6 +98,7 @@ class CategoryController extends Controller
                         sleep(60);
                     }
                 }
+            });
         }catch (\Exception $e){
             dd($e);
         }

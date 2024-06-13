@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
 use App\Models\AttributeCategory;
+use App\Models\AttributeValue;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -27,12 +28,11 @@ class ProductController extends Controller
     //add features
     public function createFeature(Request $request, $id=null){
 
-        $limit = 100;
+        $limit = 10;
         $offset = 0;
-
+        try {
             while (true) {
-                $attributes = Attribute::with("attributeValues","attributeCategories")
-                    ->skip($offset)
+                $attributes = Attribute::where("id",">",248)->skip($offset)
                     ->take($limit)
                     ->get();
 
@@ -43,34 +43,48 @@ class ProductController extends Controller
 
                 foreach ($attributes as $attribute) {
                     $categoryString="";
-                    if($attribute->id!=74){
-                        continue;
-                    }else{
-                        dd($attribute->attributeCategories);
-                    }
-                    foreach($attribute->attributeCategories as $category){
-                       $c=Category::where("id",$category->category_id)->first();
-                        $categoryString.=$c->cscart_id.",";
-                    }
+
+
+                            $attributeCategories=AttributeCategory::where("attribute_id",$attribute->id)->get();
+
+
+
+                            foreach($attributeCategories as $category){
+
+                            $c=Category::where("id",$category->category_id)->first();
+                                $categoryString.=$c->cscart_id.",";
+                            }
+
+
+
+
+
+                   // dd($attribute->id);
                     $requestArray = [];
                     $requestArray['description'] = $attribute->name;
                     $requestArray['name'] = $attribute->name;
                     $requestArray['variants'] = [];
                     $requestArray['feature_type'] = "M";
                     $requestArray['categories_path'] = $categoryString;
+                    $requestArray['company_id'] = 1;
 
-                    foreach ($attribute->attributeValues as $value) {
 
-                        $requestArray['variants'][] = [
-                            "variant" => $value->name,
-                        ];
-                    }
 
-                    try {
+                        $attributeValues = AttributeValue::where('attribute_id', $attribute->id)->get();
+                        foreach ($attributeValues as $val) {
+
+                            $requestArray['variants'][] = [
+                                "variant" => $val->name,
+                            ];
+                        }
+
+
+
+                  //  dd($requestArray);
                         $response = Http::withBasicAuth(env("API_USERNAME"), env("API_PASSWORD"))
                             ->timeout(600) // Zaman aşımı süresini 60 saniye olarak ayarla
                             ->post(env('API_URL') . '/features', $requestArray);
-
+                           // dd($response->body());
                         if ($response->successful()) {
                             // İstek başarılı olursa yapılacak işlemler
                             echo $response->body();
@@ -78,15 +92,15 @@ class ProductController extends Controller
                             // İstek başarısız olursa yapılacak işlemler
                             echo 'Request failed: ' . $response->status();
                         }
-                    } catch (\Throwable $th) {
-                        dd($th->getMessage());
-                    }
+
                 }
 
                 $offset += $limit; // Bir sonraki chunk için offset'i arttır
             }
 
-
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
 
       //  dd($requestArray);
 
@@ -97,7 +111,7 @@ class ProductController extends Controller
     //create category
     public function createCategory()
     {
-        $allCategory=Category::all();
+        $allCategory=Category::whereNull("cscart_id")->get();
         foreach ($allCategory as $category) {
 
             $parent_id=$category->parent_id?$category->parent_id:0;
@@ -105,14 +119,16 @@ class ProductController extends Controller
 
                 $parent_cscart_id=Category::where("id",$parent_id)->first();
 
-            $res=Http::withBasicAuth(env("API_USERNAME"),env("API_PASSWORD"))-> post(env('API_URL').'/categories',[
+            $res=Http::timeout(500)->withBasicAuth(env("API_USERNAME"),env("API_PASSWORD"))->post(env('API_URL').'/categories',[
                 "company_id"=>0,
                 "description"=>$category->name,
                 "category"=>$category->name,
                 "status"=>"A",
                  "parent_id"=>$parent_cscart_id?$parent_cscart_id->cscart_id:0,
-                "trendyol_id"=>"0"
+                "trendyol_id"=>"0",
+                "storefront_id"=>1
          ]);
+       //  dd($res->json());
       $cscart_category_id=$res->json()['category_id'];
       //update category
     $updateCategory=Category::where("id",$category->id)->update(["cscart_id"=>$cscart_category_id]);
