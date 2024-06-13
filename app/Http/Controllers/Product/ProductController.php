@@ -32,7 +32,7 @@ class ProductController extends Controller
         $offset = 0;
         try {
             while (true) {
-                $attributes = Attribute::where("id",">",21)->skip($offset)
+                $attributes = Attribute::where("id",">",146)->skip($offset)
                     ->take($limit)
                     ->get();
 
