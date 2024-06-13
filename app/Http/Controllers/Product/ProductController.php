@@ -81,10 +81,16 @@ class ProductController extends Controller
 
 
                   //  dd($requestArray);
-                        $response = Http::withBasicAuth(env("API_USERNAME"), env("API_PASSWORD"))
-                            ->timeout(500) // Zaman aşımı süresini 60 saniye olarak ayarla
-                            ->post(env('API_URL') . '/features', $requestArray);
-                           // dd($response->body());
+                  try {
+                   // dd($requestArray);
+                    $response = Http::withBasicAuth(env("API_USERNAME"), env("API_PASSWORD"))
+                    ->timeout(500) // Zaman aşımı süresini 60 saniye olarak ayarla
+                    ->post(env('API_URL') . '/features', $requestArray);
+
+                  } catch (\Throwable $th) {
+                   dd($th);
+                  }
+
                         if ($response->successful()) {
                             // İstek başarılı olursa yapılacak işlemler
                             echo $response->body();
