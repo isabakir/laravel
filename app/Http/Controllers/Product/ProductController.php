@@ -32,7 +32,7 @@ class ProductController extends Controller
         $offset = 0;
         try {
             while (true) {
-                $attributes = Attribute::where("id",">",16)->skip($offset)
+                $attributes = Attribute::where("id",">",21)->skip($offset)
                     ->take($limit)
                     ->get();
 
@@ -82,7 +82,7 @@ class ProductController extends Controller
 
                   //  dd($requestArray);
                         $response = Http::withBasicAuth(env("API_USERNAME"), env("API_PASSWORD"))
-                            ->timeout(600) // Zaman aşımı süresini 60 saniye olarak ayarla
+                            ->timeout(500) // Zaman aşımı süresini 60 saniye olarak ayarla
                             ->post(env('API_URL') . '/features', $requestArray);
                            // dd($response->body());
                         if ($response->successful()) {
