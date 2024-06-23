@@ -248,6 +248,7 @@ class ProductController extends Controller
             $res=Http::withBasicAuth(env("API_USERNAME"),env("API_PASSWORD"))-> get(env('API_URL').'/stores/'.$request->company_id.'/products');
             $products=$res->json()['products'];
            // dd($products);
+
             $params=$res->json()['params'];
              $myResponse=[
                  "page"=>$params["page"],
@@ -256,6 +257,11 @@ class ProductController extends Controller
                  "totalPages"=>$params["page"],
                  "content"=>[]
              ];
+             //get company detail
+                $companyBrand="";
+                $company=Http::withBasicAuth(env("API_USERNAME"),env("API_PASSWORD"))-> get(env('API_URL').'/vendors/'.$request->company_id);
+                $companyDetail=$company->json();
+                $companyBrand=$companyDetail['company'];
             $myProduct=[];
             foreach($products as $product){
                $category_name= $this->getCategoriesDetail($product["main_category"]);
@@ -272,13 +278,13 @@ class ProductController extends Controller
                }
 
               // $attributes=
-                dd($product);
+                //dd($product);
                 $myProduct[]=[
                     "approved"=>$product["status"]=="A"?true:false,
                     "archived"=>$product["status"]=="H"?true:false,
                     "attributes"=>$attributes,
                     "barcode"=>$product["product_code"],
-                    "brand"=>$product["brand"],
+                    "brand"=>$companyBrand,
                     "brandId"=>$product["company_id"],
                     "categoryName"=>$category_name['category'],
                     "createDateTime"=>$product["timestamp"],
