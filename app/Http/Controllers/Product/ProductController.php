@@ -292,8 +292,9 @@ class ProductController extends Controller
                     "dimensionalWeight"=>$product["weight"],
                 ];
             }
-
-            return response()->json(['message' => 'Product List',"response"=>$res->json()]);
+            $myResponse['content']=$myProduct;
+            return response()->json(['message' => 'Product List',"response"=>$myResponse]);
+            //return response()->json(['message' => 'Product List',"response"=>$myProduct->json()]);
         }
 
     }
