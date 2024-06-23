@@ -247,7 +247,7 @@ class ProductController extends Controller
 
             $res=Http::withBasicAuth(env("API_USERNAME"),env("API_PASSWORD"))-> get(env('API_URL').'/stores/'.$request->company_id.'/products');
             $products=$res->json()['products'];
-            dd($products);
+           // dd($products);
             $params=$res->json()['params'];
              $myResponse=[
                  "page"=>$params["page"],
