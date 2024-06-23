@@ -272,7 +272,7 @@ class ProductController extends Controller
                }
 
               // $attributes=
-               // dd($product);
+                dd($product);
                 $myProduct[]=[
                     "approved"=>$product["status"]=="A"?true:false,
                     "archived"=>$product["status"]=="H"?true:false,
