@@ -290,6 +290,36 @@ class ProductController extends Controller
                     "createDateTime"=>$product["timestamp"],
                     "description"=>$product["product"],
                     "dimensionalWeight"=>$product["weight"],
+                    "gender"=>"unisex",
+                    "hasActiveCampaign"=>false,
+                    "id"=>$product["product_id"],
+                    "images"=>[],
+                    "lastUpdateDate"=>$product["updated_timestamp"],
+                    "listPrice"=>$product["price"],
+                    "locked"=>false,
+                    "onSale"=>false,
+                    "pimCategoryId"=>$product["main_category"],
+                    "platformListingId"=>$product["product_id"],
+                    "productCode"=>$product["product_code"],
+                    "productContentId"=>$product["product_id"],
+                    "productMainId"=>$product["parent_product_id"],
+                    "quantity"=>$product["amount"],
+                    "salePrice"=>$product["price"],
+                    "stockCode"=>$product["product_code"],
+                    "stockUnitType"=>"Adet",
+                    "supplierId"=>$companyDetail["company_id"],
+                    "title"=>$product["product"],
+                    "vatRate"=>"",
+                    "rejected"=>false,
+                    "rejectReasonDetails"=>[],
+                    "blacklisted"=>false,
+                    "hasHtmlContent"=>false,
+                    "productUrl"=>"",
+
+
+
+
+
                 ];
             }
             $myResponse['content']=$myProduct;
