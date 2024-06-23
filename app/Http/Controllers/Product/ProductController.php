@@ -259,12 +259,24 @@ class ProductController extends Controller
             $myProduct=[];
             foreach($products as $product){
                $category_name= $this->getCategoriesDetail($product["main_category"]);
+               $attributes=[];
+               if(count($product['product_features'])>0){
+                foreach($product['product_features'] as $key=>$val){
+                    $attributes[]=[
+                         "attributeId"=>$val['feature_id'],
+                         "attributeName"=>$val['internal_name'],
+                         "attributeValue"=>$val['variant'],
+                         "attributeValueId"=>$val['variant_id']
+                    ];
+              }
+               }
+
               // $attributes=
-                dd($product);
+               // dd($product);
                 $myProduct[]=[
                     "approved"=>$product["status"]=="A"?true:false,
                     "archived"=>$product["status"]=="H"?true:false,
-                    "attributes"=>$product["attributes"],
+                    "attributes"=>$attributes,
                     "barcode"=>$product["product_code"],
                     "brand"=>$product["brand"],
                     "brandId"=>$product["company_id"],
