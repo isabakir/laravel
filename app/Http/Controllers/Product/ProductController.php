@@ -259,7 +259,7 @@ class ProductController extends Controller
             $myProduct=[];
             foreach($products as $product){
                $category_name= $this->getCategoriesDetail($product["main_category"]);
-                dd($category_name['category']);
+              //  dd($category_name['category']);
                 $myProduct[]=[
                     "approved"=>$product["approved"],
                     "archived"=>$product["archived"],
